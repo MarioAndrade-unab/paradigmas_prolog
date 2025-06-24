@@ -57,8 +57,21 @@ calcular_calorias_menu :-
     format('* Postre: ~w (~w cal)~n', [Postre, CalPo]),
     format('TOTAL: ~w calorías~n', [Total]).
 
+% lista opciones de platos disponibles
+listar_entradas :-
+    forall(entrada(Nombre,Cal),format('-~w (~w cal)~n',[Nombre,Cal])).
+
+listar_principales :-
+    forall(principal(Nombre,Cal),format('-~w (~w cal)~n',[Nombre,Cal])).
+
+listar_postre :-
+    forall(postre(Nombre,Cal),format('-~w (~w cal)~n',[Nombre,Cal])).
+
+
+% ingreso de los platos por el usuario
 pedir_entrada(Entrada, Cal) :-
     repeat,
+    write('Opciones disponibles de Entrada:'),nl, listar_entradas,
     write('Ingrese una entrada: '),
     read_line_to_string(user_input, Input),
     normalize_space(atom(E), Input), 
@@ -69,6 +82,7 @@ pedir_entrada(Entrada, Cal) :-
 
 pedir_principal(Principal, Cal) :-
     repeat,
+    write('Opciones disponibles Plato Principal:'),nl, listar_principales,
     write('Ingrese un plato principal: '),
     read_line_to_string(user_input, Input),
     normalize_space(string(Limpio), Input),
@@ -80,6 +94,7 @@ pedir_principal(Principal, Cal) :-
 
 pedir_postre(Postre, Cal) :-
     repeat,
+    write('Opciones disponibles de Postres:'),nl, listar_postre,
     write('Ingrese un postre: '),
     read_line_to_string(user_input, Input),
     normalize_space(atom(Po), Input), 
@@ -88,11 +103,13 @@ pedir_postre(Postre, Cal) :-
     ; write('Postre no válido. Intente de nuevo.'), nl, fail
     ).
 
+% Manejo de los espacios en el plato principal
 reemplazar_espacios_por_guiones(String, Resultado) :-
     string_chars(String, Chars),
     reemplazar_espacios_en_chars(Chars, CharsConGuion),
     atom_chars(Resultado, CharsConGuion).
 
+% reemplaza espacios por _
 reemplazar_espacios_en_chars([], []).
 reemplazar_espacios_en_chars([' '|T1], ['_'|T2]) :-
     reemplazar_espacios_en_chars(T1, T2).
@@ -110,6 +127,7 @@ mostrar_combinaciones_bajas :-
     buscar_combinaciones(Limite),
     !.
 
+% busca las combinaciones de los plato
 buscar_combinaciones(Limite) :-
     entrada(E, CalE),
     principal(P, CalP),
